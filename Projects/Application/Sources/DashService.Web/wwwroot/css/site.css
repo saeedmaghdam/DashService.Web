@@ -6,3 +6,7 @@
     .masonry .layers .layer p.namespace, .masonry .layers .layer p.version{
         font-size: 10px!important;
     }
+
+.page-container {
+    background-color: #f9fafb !important;
+}

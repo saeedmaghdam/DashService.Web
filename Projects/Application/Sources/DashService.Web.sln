@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashService.Web", "DashService.Web\DashService.Web.csproj", "{FE5AE593-7996-4249-9C27-FE85FBA86CCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE5AE593-7996-4249-9C27-FE85FBA86CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5AE593-7996-4249-9C27-FE85FBA86CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5AE593-7996-4249-9C27-FE85FBA86CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE5AE593-7996-4249-9C27-FE85FBA86CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B2E22BD-C978-4668-921A-A1F83C5EE117}
+	EndGlobalSection
+EndGlobal

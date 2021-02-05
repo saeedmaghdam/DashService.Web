@@ -4,30 +4,110 @@
 
 <div class="row gap-20 masonry pos-r" style="overflow: initial!important;">
     <div class="masonry-sizer col-md-6"></div>
-    <div class="masonry-item w-100">
+    <div class="masonry-item w-100" id="jobscontainer">
         <div class="row gap-20">
-            <div class="col-md-3">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var socket;
+    var isInitialized = false;
+
+    $(document).ready(function () {
+        let jobBox = `<div class="col-md-3 job" viewId="{viewId}">
                 <div class="layers bd bgc-white p-20">
                     <div class="layer w-100 mB-10">
-                        <h6 class="lh-1">Sample Job</h6>
-                        <p class="description">This is a "Hello World" job</p>
-                        <p class="namespace">DashService.Job.Sample</p>
-                        <p class="version">Version 1.0.0</p>
+                        <h6 class="lh-1">{name}</h6>
+                        <p class="description">{description}</p>
+                        <p class="namespace">{namespace}</p>
+                        <p class="version">{version}</p>
                     </div>
                     <div class="layer w-100">
                         <div class="peers ai-sb fxw-nw">
                             <div class="peer peer-greed">
-                                <button type="button" class="btn btn-info bdrs-50p w-2r p-0 h-2r"><i class="fa fa-pause"></i></button>
-                                <button type="button" class="btn btn-success bdrs-50p w-2r p-0 h-2r"><i class="fa fa-play"></i></button>
-                                <button type="button" class="btn btn-danger bdrs-50p w-2r p-0 h-2r"><i class="fa fa-power-off"></i></button>
+                                <button type="button" class="btn btn-success bdrs-50p w-2r p-0 h-2r" onclick="startJob('{viewId}')"><i class="fa fa-play"></i></button>
+                                <button type="button" class="btn btn-danger bdrs-50p w-2r p-0 h-2r" onclick="stopJob('{viewId}')"><i class="fa fa-power-off"></i></button>
                             </div>
                             <div class="peer">
-                                <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">Running</span>
+                                <span class="status d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-green-50 c-green-500">{status}</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            </div>`;
+
+        let jobsContainer = $('#jobscontainer>.row:last()');
+
+        $.ajax({
+            url: 'http://localhost:5000/Job',
+            type: 'GET',
+            success: function (data) {
+                $.each(data.data, function (index, value) {
+                    let finalJobBox = jobBox;
+                    finalJobBox = finalJobBox.replace(/{viewId}/gi, value.viewId);
+                    finalJobBox = finalJobBox.replace('{name}', value.name);
+                    finalJobBox = finalJobBox.replace('{description}', value.description);
+                    finalJobBox = finalJobBox.replace('{namespace}', value.namespace);
+                    finalJobBox = finalJobBox.replace('{version}', value.version);
+                    finalJobBox = finalJobBox.replace('{status}', value.jobStatus);
+                    jobsContainer.append(finalJobBox);
+
+                    if ($('#jobscontainer>.row:last()>.job').length == 4) {
+                        $('#jobscontainer').append(`<div class="row gap-20"></div>`);
+                    }
+                });
+
+                if (!socket || socket.readyState !== WebSocket.OPEN) {
+                    socket = new WebSocket('ws://localhost:5000/hub');
+                }
+
+                if (!isInitialized) {
+                    socket.onopen = function (e) {
+
+                    }
+
+                    socket.onclose = function (e) {
+
+                    }
+
+                    socket.onerror = function (e) {
+
+                    }
+
+                    socket.onmessage = function (e) {
+                        handleCommand(e.data);
+                    }
+
+                    isInitialized = true;
+                }
+            }
+        });
+    });
+
+    function startJob(viewId) {
+        socket.send('Job.Start(' + viewId + ')');
+    }
+
+    function stopJob(viewId) {
+        socket.send('Job.Stop(' + viewId + ')');
+    }
+
+    function htmlEscape(input) {
+        return String(input)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function handleCommand(command) {
+        let json = JSON.parse(command);
+
+        if (json.command == 'change_status') {
+            $('#jobscontainer').find('.job[viewid="' + json.data.view_id + '"]').find('span.status').html(json.data.status)
+        }
+    }
+</script>
